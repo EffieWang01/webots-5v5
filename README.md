@@ -14,27 +14,122 @@ A Windows + WSL2 5v5 robot-football simulator for comparing two independent ROS 
 
 ROS 2 Humble, colcon, and Linux build dependencies are installed automatically inside WSL. No Windows ROS installation is needed.
 
-## Quick start
+## Run the complete simulation
 
-1. Extract the project to a local Windows drive.
-2. Double-click **`SETUP.cmd`** once. Enter your Ubuntu `sudo` password when requested.
-3. Double-click **`START.cmd`** for every match.
+The simulator is launched from **Windows**, not from a standalone WSL terminal. Webots and the relay run on Windows; ROS 2 Humble, the bridge, the game controller, and both five-robot Brain teams run inside WSL2.
 
-`START.cmd` also launches setup automatically when the WSL workspace has not been built.
+### 1. Install the prerequisites
 
-PowerShell alternative:
+Install the following before the first run:
+
+1. Enable WSL2 and install the exact Ubuntu release used by ROS 2 Humble. Run this in an Administrator PowerShell window, then restart Windows if requested:
+
+   ```powershell
+   wsl --install -d Ubuntu-22.04
+   ```
+
+2. Open **Ubuntu 22.04** once from the Start menu and finish creating its Linux user and password. The setup script will later ask for this password through `sudo`.
+3. Install Webots for Windows. The scripts have been tested with **Webots R2025a**.
+4. Install 64-bit Python **3.10 or newer** for Windows and enable **Add python.exe to PATH** in the installer.
+5. Confirm the required programs from Windows PowerShell:
+
+   ```powershell
+   wsl --list --verbose
+   python.exe --version
+   ```
+
+   `Ubuntu-22.04` should appear in the WSL list, and Python should report version 3.10 or newer.
+
+### 2. Download the project
+
+Keep the project on a local Windows drive such as `C:` or `D:`. Do not place it only inside the Linux filesystem.
 
 ```powershell
-cd <project-folder>
-powershell.exe -ExecutionPolicy Bypass -File .\SETUP.ps1
-powershell.exe -ExecutionPolicy Bypass -File .\START.ps1
+git clone https://github.com/EffieWang01/webots-5v5.git
+cd webots-5v5
 ```
 
-If the WSL distro has a different name:
+Downloading and extracting the GitHub ZIP to a local Windows folder also works.
+
+### 3. Perform the one-time setup and build
+
+From the project root, either double-click **`SETUP.cmd`** or run:
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\SETUP.ps1
+```
+
+This script checks WSL, Webots, and Windows Python, then installs ROS 2 Humble, `colcon`, and the required Linux packages inside Ubuntu. Finally, it resolves the ROS dependencies and builds both Brains and the simulator bridge. Internet access is required, and Ubuntu may ask for the Linux `sudo` password.
+
+The first setup can take several minutes. It is complete when the terminal prints:
+
+```text
+[OK] WSL setup and build completed.
+[OK] Setup complete. Double-click START.cmd to run a match.
+```
+
+If the build fails, fix the reported error and run `SETUP.cmd` again. Re-running setup is safe.
+
+### 4. Start a match
+
+For every simulation run, either double-click **`START.cmd`** or execute:
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\START.ps1
+```
+
+`START.ps1` performs the entire startup sequence:
+
+1. stops stale simulator processes from the previous run;
+2. starts the Windows/WSL relay on local ports `10081-10083`;
+3. starts the five RED and five BLUE ROS 2 Brain nodes, the game controller, and the Webots bridge in WSL;
+4. opens `sim_webots/worlds/football_5v5_brain.wbt` in Webots.
+
+If the workspace has not been built yet, `START.cmd` automatically runs the setup first. After Webots opens, wait for all ROS 2 nodes to initialize. The robots should then begin moving under Brain control.
+
+### 5. Verify that everything is running
+
+A successful launcher terminal ends with:
+
+```text
+[OK] Webots 5v5 Brain Simulator is starting.
+Robots should begin moving after Webots and all ROS 2 nodes are ready.
+```
+
+For a detailed ROS link check, open an Ubuntu 22.04 WSL terminal, change to the project directory, source the workspace, and run:
+
+```bash
+source /opt/ros/humble/setup.bash
+source install/setup.bash
+./scripts/healthcheck_webots_brain_5v5.sh
+```
+
+The check verifies all ten Brain nodes, the game controller, the Webots bridge, world-state messages, and movement command topics.
+
+### 6. Stop or restart
+
+Close Webots when the match is finished. To stop any remaining WSL nodes manually, run this inside WSL from the project directory:
+
+```bash
+./scripts/stop_webots_brain_5v5.sh
+```
+
+Normally, starting `START.cmd` again is enough: it cleans up the previous instance before launching a new match.
+
+### Non-default installation paths
+
+The default WSL distribution name is `Ubuntu-22.04`. If yours has another name, use the exact name shown by `wsl --list --verbose` for both setup and startup:
 
 ```powershell
 powershell.exe -ExecutionPolicy Bypass -File .\SETUP.ps1 -Distro "Ubuntu-22.04"
 powershell.exe -ExecutionPolicy Bypass -File .\START.ps1 -Distro "Ubuntu-22.04"
+```
+
+Webots is detected from `WEBOTS_HOME`, the standard installation locations, or `PATH`. If detection fails, pass its executable explicitly to both commands:
+
+```powershell
+powershell.exe -ExecutionPolicy Bypass -File .\SETUP.ps1 -WebotsPath "C:\Program Files\Webots\msys64\mingw64\bin\webots.exe"
+powershell.exe -ExecutionPolicy Bypass -File .\START.ps1 -WebotsPath "C:\Program Files\Webots\msys64\mingw64\bin\webots.exe"
 ```
 
 ## Replace a Brain
