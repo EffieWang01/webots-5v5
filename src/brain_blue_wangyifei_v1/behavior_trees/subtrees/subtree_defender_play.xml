@@ -1,0 +1,45 @@
+<root BTCPP_format="4" >
+   <include path="./subtree_cam_find_and_track_ball.xml" />
+   <include path="./subtree_find_ball.xml" />
+   <include path="./subtree_locate.xml" />
+   <!--
+     brain_v2 DefenderPlay:
+     - find: search / ready slot
+     - defend: stand on goal-blocking line (between ball and own goal)
+     - chase / adjust / kick: clear when ball enters own half
+   -->
+    <BehaviorTree ID="DefenderPlay">
+      <ReactiveSequence>
+         <SelfLocate mode="trust_direction" />
+         <SubTree ID="Locate" _autoremap="true" _while="decision!='find'" />
+         <ReactiveSequence _while="wait_for_opponent_kickoff" name="wait for opponent kickoff">
+            <SubTree ID="CamFindAndTrackBall" _autoremap="true" />
+            <SetVelocity />
+         </ReactiveSequence>
+         <ReactiveSequence _while="!wait_for_opponent_kickoff" name="our kickoff or opponent already kicked off">
+            <Sequence _while="ball_out">
+               <SubTree ID="CamFindAndTrackBall" _autoremap="true" />
+               <GoBackInField />
+               <SubTree ID="Locate" _autoremap="true" _while="decision!='find'" />
+            </Sequence>
+            <ReactiveSequence _while="!ball_out">
+               <SubTree ID="CamFindAndTrackBall" _autoremap="true" />
+               <CalcKickDir />
+               <Sequence>
+                  <ReactiveSequence>
+                     <DefenderDecide decision_out="{decision}" decision_in="{decision}" />
+                     <SubTree ID="FindBall" _while="decision=='find'" _autoremap="true" />
+                  </ReactiveSequence>
+                  <GoToGoalBlockingPosition _while="decision=='defend'"
+                      vx_limit="0.70" vy_limit="0.55"
+                      dist_to_goalline="4.5"
+                      dist_tolerance="0.22" theta_tolerance="0.38" />
+                  <Chase   _while="decision=='chase'"  vx_limit="0.85" vy_limit="0.25" vtheta_limit="1.0" dist="0.12" safe_dist="0.45" />
+                  <Adjust  _while="decision=='adjust'" turn_threshold="0.5" range="0.4" vx_limit="0.65" vy_limit="0.55" vtheta_limit="1.4" />
+                  <Kick    _while="decision=='kick'" speed_limit="0.75" min_msec_kick="900" msecs_stablize="800"/>
+               </Sequence>
+            </ReactiveSequence>
+         </ReactiveSequence>
+      </ReactiveSequence>
+   </BehaviorTree>
+</root>

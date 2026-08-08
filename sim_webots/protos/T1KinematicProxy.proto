@@ -1,0 +1,218 @@
+#VRML_SIM R2025a utf8
+# tags: robot/walking
+# Lightweight T1-shaped kinematic proxy; NOT the official 23-DoF joint model.
+
+PROTO T1KinematicProxy [
+  field SFVec3f    translation 0 0 0
+  field SFRotation rotation 0 0 1 0
+  field SFString   name "T1_KINEMATIC_PROXY"
+  field SFString   controller "<none>"
+  field SFString   customData ""
+  field SFColor    teamColor 0.8 0.05 0.05
+]
+{
+  Robot {
+    translation IS translation
+    rotation IS rotation
+    name IS name
+    controller IS controller
+    customData IS customData
+    supervisor FALSE
+    synchronization TRUE
+    selfCollision FALSE
+    locked TRUE
+    children [
+
+      # Torso
+      Pose {
+        translation 0 0 0.78
+        children [
+          Shape {
+            appearance PBRAppearance {
+              baseColor IS teamColor
+              roughness 0.7
+              metalness 0
+            }
+            geometry Box {
+              size 0.34 0.46 0.46
+            }
+          }
+        ]
+      }
+      # Chest plate
+      Pose {
+        translation 0.181 0 0.81
+        children [
+          Shape {
+            appearance PBRAppearance {
+              baseColor 0.04 0.04 0.05
+              roughness 0.65
+              metalness 0
+            }
+            geometry Box {
+              size 0.025 0.28 0.16
+            }
+          }
+        ]
+      }
+      # Head
+      Pose {
+        translation 0 0 1.15
+        children [
+          Shape {
+            appearance PBRAppearance {
+              baseColor 0.72 0.76 0.81
+              roughness 0.6
+              metalness 0
+            }
+            geometry Sphere {
+              radius 0.15
+              subdivision 2
+            }
+          }
+        ]
+      }
+      # Face visor points along local +X
+      Pose {
+        translation 0.135 0 1.17
+        children [
+          Shape {
+            appearance PBRAppearance {
+              baseColor 0.02 0.02 0.025
+              roughness 0.4
+              metalness 0.1
+            }
+            geometry Box {
+              size 0.04 0.19 0.075
+            }
+          }
+        ]
+      }
+      # Pelvis
+      Pose {
+        translation 0 0 0.51
+        children [
+          Shape {
+            appearance PBRAppearance {
+              baseColor 0.08 0.08 0.10
+              roughness 0.75
+              metalness 0
+            }
+            geometry Box {
+              size 0.29 0.36 0.16
+            }
+          }
+        ]
+      }
+      # Arms
+      Pose {
+        translation 0 0.31 0.73
+        rotation 1 0 0 1.57079632679
+        children [
+          Shape {
+            appearance PBRAppearance {
+              baseColor IS teamColor
+              roughness 0.7
+              metalness 0
+            }
+            geometry Capsule {
+              radius 0.07
+              height 0.38
+            }
+          }
+        ]
+      }
+      Pose {
+        translation 0 -0.31 0.73
+        rotation 1 0 0 1.57079632679
+        children [
+          Shape {
+            appearance PBRAppearance {
+              baseColor IS teamColor
+              roughness 0.7
+              metalness 0
+            }
+            geometry Capsule {
+              radius 0.07
+              height 0.38
+            }
+          }
+        ]
+      }
+      # Legs
+      Pose {
+        translation 0 0.11 0.285
+        rotation 1 0 0 1.57079632679
+        children [
+          Shape {
+            appearance PBRAppearance {
+              baseColor IS teamColor
+              roughness 0.7
+              metalness 0
+            }
+            geometry Capsule {
+              radius 0.085
+              height 0.43
+            }
+          }
+        ]
+      }
+      Pose {
+        translation 0 -0.11 0.285
+        rotation 1 0 0 1.57079632679
+        children [
+          Shape {
+            appearance PBRAppearance {
+              baseColor IS teamColor
+              roughness 0.7
+              metalness 0
+            }
+            geometry Capsule {
+              radius 0.085
+              height 0.43
+            }
+          }
+        ]
+      }
+      # Feet point along local +X
+      Pose {
+        translation 0.075 0.11 0.055
+        children [
+          Shape {
+            appearance PBRAppearance {
+              baseColor 0.04 0.04 0.05
+              roughness 0.8
+              metalness 0
+            }
+            geometry Box {
+              size 0.34 0.18 0.11
+            }
+          }
+        ]
+      }
+      Pose {
+        translation 0.075 -0.11 0.055
+        children [
+          Shape {
+            appearance PBRAppearance {
+              baseColor 0.04 0.04 0.05
+              roughness 0.8
+              metalness 0
+            }
+            geometry Box {
+              size 0.34 0.18 0.11
+            }
+          }
+        ]
+      }
+    ]
+    boundingObject Pose {
+      translation 0 0 0.63
+      children [
+        Box {
+          size 0.48 0.66 1.26
+        }
+      ]
+    }
+  }
+}

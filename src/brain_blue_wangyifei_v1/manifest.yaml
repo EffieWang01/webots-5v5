@@ -1,0 +1,44 @@
+name: brain_v3
+version: 3.0.0
+display_name: Brain v3 (setplay + anti-crowd)
+tree_file: behavior_trees/game.xml
+config_file: config/config.yaml
+vision_config: config/vision.yaml
+optimized: true
+# Jersey duties (v3):
+#   1 GK — goal-kick taker only
+#   2 defender — own-half clear; never chase midfield
+#   3 midfielder strategy (role=striker) — open-play support; set-play may take if closest
+#   4 primary striker — open-play lead prefer; set-play by cost-rank
+#   5 secondary striker — open-play steal lead if closer; set-play by cost-rank
+roles:
+  1: goal_keeper
+  2: defender
+  3: striker
+  4: striker
+  5: striker
+notes: >
+  Fork of brain_v2. Brain owns set-play (bridge_set_play_drive=false).
+  Set-play taker = cost-rank 0 among strikers (not fixed jersey); GK for goal kick.
+  Open-play anti-crowd (R_crowd) + lead hysteresis; jersey cost bias off during FREE_KICK.
+  Corner fix: freekickKickoffStartTime rising-edge only (no forever isFreekickKickingOff);
+  closer corner approach + pitch-side stand; corner kickDir to goal mouth; close-range kick gate.
+  Goal-kick fix (real+sim): OwnGoalKickExecute — GK GoalKeeperPlay take; teammates StrikerFreekick
+  support (no PlayUnified chase into box). GoalieDecide own GOAL_KICK never retreat; Decide
+  belt-and-suspenders force assist/defend for field players.
+  Goal-kick strike-zone: attack kickDir + settle ~250ms in relaxed front zone before kick;
+  field support ≥4.5m clear of goal area; freekick_i_am_taker = GK role only.
+  Throw-in/corner fix (real+sim): OwnLineSetPlayExecute — sticky freekick_i_am_taker (closest
+  striker) kicks via StrikerFreekick EXECUTE; others hold inward support ≥5m; defending team
+  keeps wall on EXECUTE. Strike-zone + settle for THROW_IN/CORNER; pitch-side stand.
+  Bridge setplay auto-kick: geometric closest only + boundary strike/unpin zone.
+  FD_ROBOLEAGUE = 22x14 (sim/competition). Practice 14x9: field_type:=adult_size (no rebuild).
+  Optional game.field_length/width overrides. See 05_真机可迁移原则.md.
+  A3: throw-in/corner kickDir forced into pitch; /kick_ball/<robot> for sim execution.
+  Boundary set-play A7e: runoff/goal-line behind orbit (Brain); kick only when behind+inward
+  aligned; soft failsafe after setplay_orbit_timeout_ms if still facing infield.
+  A8: boundary take = Brain GOTO/FACE/KICK_ONCE; /kick_ball rising-edge only;
+  Bridge executes pending intent + scripted-release (no auto-kick / empty-swing unpin).
+  Sim GC throw-in/corner inset 0.18; set-play timeout 25s frees pin.
+  match_id list TBD after contrast matches.
+based_on: brain_v2

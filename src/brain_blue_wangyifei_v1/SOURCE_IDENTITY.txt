@@ -1,0 +1,4 @@
+ROS 2 package: brain_blue_wangyifei_v1
+Team: BLUE
+Source: uploaded wangyifei_v1.zip
+Upstream VERSION: 3.0.0

@@ -1,0 +1,61 @@
+robots:
+  - name: red_1
+    team: red
+    team_id: 29
+    player_id: 1
+    role: goal_keeper
+    flip_field: false
+  - name: red_2
+    team: red
+    team_id: 29
+    player_id: 2
+    role: defender
+    flip_field: false
+  - name: red_3
+    team: red
+    team_id: 29
+    player_id: 3
+    role: striker
+    flip_field: false
+  - name: red_4
+    team: red
+    team_id: 29
+    player_id: 4
+    role: striker
+    flip_field: false
+  - name: red_5
+    team: red
+    team_id: 29
+    player_id: 5
+    role: striker
+    flip_field: false
+  - name: blue_1
+    team: blue
+    team_id: 30
+    player_id: 1
+    role: goal_keeper
+    flip_field: true
+  - name: blue_2
+    team: blue
+    team_id: 30
+    player_id: 2
+    role: defender
+    flip_field: true
+  - name: blue_3
+    team: blue
+    team_id: 30
+    player_id: 3
+    role: striker
+    flip_field: true
+  - name: blue_4
+    team: blue
+    team_id: 30
+    player_id: 4
+    role: striker
+    flip_field: true
+  - name: blue_5
+    team: blue
+    team_id: 30
+    player_id: 5
+    role: striker
+    flip_field: true

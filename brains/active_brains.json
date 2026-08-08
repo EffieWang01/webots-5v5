@@ -1,0 +1,12 @@
+{
+  "red": {
+    "name": "brain_v3",
+    "package": "brain_red_v3",
+    "status": "baseline"
+  },
+  "blue": {
+    "name": "wangyifei_v1",
+    "package": "brain_blue_wangyifei_v1",
+    "status": "baseline"
+  }
+}

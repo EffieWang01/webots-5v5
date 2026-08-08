@@ -1,0 +1,99 @@
+{
+  "protocol_version": 1,
+  "ros_bridge_host": "127.0.0.1",
+  "state_port": 10081,
+  "command_port": 10082,
+  "state_hz": 30.0,
+  "command_timeout": 0.6,
+  "team_ids": {
+    "red": 29,
+    "blue": 30
+  },
+  "field": {
+    "length": 22.0,
+    "width": 14.0,
+    "turf_length": 26.0,
+    "turf_width": 18.0,
+    "safety_buffer": 2.0,
+    "line_width": 0.08,
+    "center_circle_radius": 2.0,
+    "penalty_area_width": 8.0,
+    "penalty_area_depth": 5.0,
+    "goal_area_width": 5.0,
+    "goal_area_depth": 2.0,
+    "penalty_mark_distance": 3.5,
+    "corner_arc_radius": 0.7,
+    "goal_width": 3.0,
+    "goal_height": 2.0,
+    "robot_edge_margin": 0.35
+  },
+  "motion": {
+    "max_vx": 1.0,
+    "max_vy": 0.45,
+    "max_vyaw": 1.2,
+    "linear_accel": 2.0,
+    "yaw_accel": 4.0
+  },
+  "kick": {
+    "min_speed": 2.0,
+    "max_speed": 7.0,
+    "contact_distance": 1.25,
+    "cooldown": 0.7
+  },
+  "timing": {
+    "ready": 1.5,
+    "set": 1.0,
+    "set_play_stop": 1.0,
+    "match_seconds": 900.0
+  },
+  "version": 7,
+  "ball_guard": {
+    "enabled": true,
+    "nominal_z": 0.12,
+    "min_z": -0.05,
+    "max_z": 3.0,
+    "safety_x": 13.2,
+    "safety_y": 9.2,
+    "max_linear_speed": 12.0,
+    "log_period": 2.0
+  },
+  "initial_kicking_team": "red",
+  "collision_guard": {
+    "enabled": true,
+    "minimum_center_distance": 0.76,
+    "iterations": 4,
+    "velocity_damping": 0.35,
+    "log_period": 2.0,
+    "mass_kg": 35.0,
+    "restitution": 0.05,
+    "tangential_friction": 0.65,
+    "position_correction": 0.9,
+    "collision_stun": 0.18,
+    "avoidance_enabled": true,
+    "avoidance_trigger_speed": 0.1,
+    "avoidance_duration": 0.7,
+    "avoidance_cooldown": 1.2,
+    "avoidance_side_speed": 0.42,
+    "avoidance_backoff_speed": 0.28,
+    "post_get_up_avoidance_duration": 0.85,
+    "fall_enabled": true,
+    "fall_relative_speed": 0.95,
+    "fall_side_speed": 0.70,
+    "fall_both_speed": 1.50,
+    "fall_cooldown": 2.5,
+    "auto_get_up_after": 1.8
+  },
+  "referee": {
+    "mode": "internal_simulated",
+    "official_udp_game_controller_enabled": false,
+    "note": "Simplified Webots referee; not the official external referee box."
+  },
+  "ball_physics": {
+    "enabled": true,
+    "ground_deceleration": 0.78,
+    "air_drag": 0.1,
+    "stop_speed": 0.09,
+    "ground_z_tolerance": 0.055,
+    "log_period": 2.0
+  }
+}

@@ -1,0 +1,963 @@
+#VRML_SIM R2025a utf8
+
+EXTERNPROTO "../protos/T1KinematicProxy.proto"
+
+WorldInfo {
+  title "Webots 5v5 Brain Simulator"
+  coordinateSystem "ENU"
+  basicTimeStep 32
+  FPS 30
+}
+
+Viewpoint {
+  position 0 0 31
+  orientation 0 1 0 1.57079632679
+  fieldOfView 0.86
+  near 0.1
+  far 140
+}
+
+Background {
+  skyColor [ 0.43 0.69 0.96 ]
+}
+
+DirectionalLight {
+  direction -1 -1 -2
+  intensity 1.55
+  ambientIntensity 0.75
+  castShadows FALSE
+}
+
+# Official 5v5 baseline: 26 m x 18 m turf, 22 m x 14 m marked field,
+# 2 m safety buffer on every side, 80 mm white lines.
+DEF FIELD Solid {
+  translation 0 0 -0.05
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0.025 0.46 0.075
+        roughness 1
+        metalness 0
+      }
+      geometry Box { size 26 18 0.1 }
+    }
+  ]
+  name "field_26x18_with_22x14_play_area"
+  boundingObject Box { size 26 18 0.1 }
+  locked TRUE
+}
+
+DEF OFFICIAL_FIELD_MARKINGS Group {
+  children [
+    Pose {
+      translation 0.000000 7.000000 0.016
+      rotation 0 0 1 0.000000000
+      children [ Shape { appearance DEF WHITE PBRAppearance { baseColor 1 1 1 roughness 0.85 metalness 0 } geometry Box { size 22.000000 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation 0.000000 -7.000000 0.016
+      rotation 0 0 1 0.000000000
+      children [ Shape { appearance USE WHITE geometry Box { size 22.000000 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation -11.000000 0.000000 0.016
+      rotation 0 0 1 0.000000000
+      children [ Shape { appearance USE WHITE geometry Box { size 0.080000 14.000000 0.032 } } ]
+    }
+    Pose {
+      translation 11.000000 0.000000 0.016
+      rotation 0 0 1 0.000000000
+      children [ Shape { appearance USE WHITE geometry Box { size 0.080000 14.000000 0.032 } } ]
+    }
+    Pose {
+      translation 0.000000 0.000000 0.016
+      rotation 0 0 1 0.000000000
+      children [ Shape { appearance USE WHITE geometry Box { size 0.080000 14.000000 0.032 } } ]
+    }
+    Pose {
+      translation 1.997591 0.098135 0.016
+      rotation 0 0 1 1.619883712
+      children [ Shape { appearance USE WHITE geometry Box { size 0.196271 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation 1.978353 0.293461 0.016
+      rotation 0 0 1 1.718058482
+      children [ Shape { appearance USE WHITE geometry Box { size 0.196271 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation 1.940063 0.485960 0.016
+      rotation 0 0 1 1.816233253
+      children [ Shape { appearance USE WHITE geometry Box { size 0.196271 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation 1.883088 0.673780 0.016
+      rotation 0 0 1 1.914408023
+      children [ Shape { appearance USE WHITE geometry Box { size 0.196271 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation 1.807979 0.855110 0.016
+      rotation 0 0 1 2.012582794
+      children [ Shape { appearance USE WHITE geometry Box { size 0.196271 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation 1.715457 1.028205 0.016
+      rotation 0 0 1 2.110757564
+      children [ Shape { appearance USE WHITE geometry Box { size 0.196271 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation 1.606415 1.191399 0.016
+      rotation 0 0 1 2.208932335
+      children [ Shape { appearance USE WHITE geometry Box { size 0.196271 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation 1.481902 1.343118 0.016
+      rotation 0 0 1 2.307107105
+      children [ Shape { appearance USE WHITE geometry Box { size 0.196271 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation 1.343118 1.481902 0.016
+      rotation 0 0 1 2.405281875
+      children [ Shape { appearance USE WHITE geometry Box { size 0.196271 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation 1.191399 1.606415 0.016
+      rotation 0 0 1 2.503456646
+      children [ Shape { appearance USE WHITE geometry Box { size 0.196271 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation 1.028205 1.715457 0.016
+      rotation 0 0 1 2.601631416
+      children [ Shape { appearance USE WHITE geometry Box { size 0.196271 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation 0.855110 1.807979 0.016
+      rotation 0 0 1 2.699806187
+      children [ Shape { appearance USE WHITE geometry Box { size 0.196271 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation 0.673780 1.883088 0.016
+      rotation 0 0 1 2.797980957
+      children [ Shape { appearance USE WHITE geometry Box { size 0.196271 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation 0.485960 1.940063 0.016
+      rotation 0 0 1 2.896155728
+      children [ Shape { appearance USE WHITE geometry Box { size 0.196271 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation 0.293461 1.978353 0.016
+      rotation 0 0 1 2.994330498
+      children [ Shape { appearance USE WHITE geometry Box { size 0.196271 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation 0.098135 1.997591 0.016
+      rotation 0 0 1 3.092505268
+      children [ Shape { appearance USE WHITE geometry Box { size 0.196271 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation -0.098135 1.997591 0.016
+      rotation 0 0 1 3.190680039
+      children [ Shape { appearance USE WHITE geometry Box { size 0.196271 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation -0.293461 1.978353 0.016
+      rotation 0 0 1 3.288854809
+      children [ Shape { appearance USE WHITE geometry Box { size 0.196271 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation -0.485960 1.940063 0.016
+      rotation 0 0 1 3.387029580
+      children [ Shape { appearance USE WHITE geometry Box { size 0.196271 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation -0.673780 1.883088 0.016
+      rotation 0 0 1 3.485204350
+      children [ Shape { appearance USE WHITE geometry Box { size 0.196271 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation -0.855110 1.807979 0.016
+      rotation 0 0 1 3.583379121
+      children [ Shape { appearance USE WHITE geometry Box { size 0.196271 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation -1.028205 1.715457 0.016
+      rotation 0 0 1 3.681553891
+      children [ Shape { appearance USE WHITE geometry Box { size 0.196271 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation -1.191399 1.606415 0.016
+      rotation 0 0 1 3.779728661
+      children [ Shape { appearance USE WHITE geometry Box { size 0.196271 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation -1.343118 1.481902 0.016
+      rotation 0 0 1 3.877903432
+      children [ Shape { appearance USE WHITE geometry Box { size 0.196271 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation -1.481902 1.343118 0.016
+      rotation 0 0 1 3.976078202
+      children [ Shape { appearance USE WHITE geometry Box { size 0.196271 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation -1.606415 1.191399 0.016
+      rotation 0 0 1 4.074252973
+      children [ Shape { appearance USE WHITE geometry Box { size 0.196271 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation -1.715457 1.028205 0.016
+      rotation 0 0 1 4.172427743
+      children [ Shape { appearance USE WHITE geometry Box { size 0.196271 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation -1.807979 0.855110 0.016
+      rotation 0 0 1 4.270602513
+      children [ Shape { appearance USE WHITE geometry Box { size 0.196271 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation -1.883088 0.673780 0.016
+      rotation 0 0 1 4.368777284
+      children [ Shape { appearance USE WHITE geometry Box { size 0.196271 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation -1.940063 0.485960 0.016
+      rotation 0 0 1 4.466952054
+      children [ Shape { appearance USE WHITE geometry Box { size 0.196271 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation -1.978353 0.293461 0.016
+      rotation 0 0 1 4.565126825
+      children [ Shape { appearance USE WHITE geometry Box { size 0.196271 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation -1.997591 0.098135 0.016
+      rotation 0 0 1 4.663301595
+      children [ Shape { appearance USE WHITE geometry Box { size 0.196271 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation -1.997591 -0.098135 0.016
+      rotation 0 0 1 4.761476366
+      children [ Shape { appearance USE WHITE geometry Box { size 0.196271 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation -1.978353 -0.293461 0.016
+      rotation 0 0 1 4.859651136
+      children [ Shape { appearance USE WHITE geometry Box { size 0.196271 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation -1.940063 -0.485960 0.016
+      rotation 0 0 1 4.957825906
+      children [ Shape { appearance USE WHITE geometry Box { size 0.196271 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation -1.883088 -0.673780 0.016
+      rotation 0 0 1 5.056000677
+      children [ Shape { appearance USE WHITE geometry Box { size 0.196271 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation -1.807979 -0.855110 0.016
+      rotation 0 0 1 5.154175447
+      children [ Shape { appearance USE WHITE geometry Box { size 0.196271 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation -1.715457 -1.028205 0.016
+      rotation 0 0 1 5.252350218
+      children [ Shape { appearance USE WHITE geometry Box { size 0.196271 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation -1.606415 -1.191399 0.016
+      rotation 0 0 1 5.350524988
+      children [ Shape { appearance USE WHITE geometry Box { size 0.196271 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation -1.481902 -1.343118 0.016
+      rotation 0 0 1 5.448699759
+      children [ Shape { appearance USE WHITE geometry Box { size 0.196271 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation -1.343118 -1.481902 0.016
+      rotation 0 0 1 5.546874529
+      children [ Shape { appearance USE WHITE geometry Box { size 0.196271 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation -1.191399 -1.606415 0.016
+      rotation 0 0 1 5.645049299
+      children [ Shape { appearance USE WHITE geometry Box { size 0.196271 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation -1.028205 -1.715457 0.016
+      rotation 0 0 1 5.743224070
+      children [ Shape { appearance USE WHITE geometry Box { size 0.196271 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation -0.855110 -1.807979 0.016
+      rotation 0 0 1 5.841398840
+      children [ Shape { appearance USE WHITE geometry Box { size 0.196271 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation -0.673780 -1.883088 0.016
+      rotation 0 0 1 5.939573611
+      children [ Shape { appearance USE WHITE geometry Box { size 0.196271 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation -0.485960 -1.940063 0.016
+      rotation 0 0 1 6.037748381
+      children [ Shape { appearance USE WHITE geometry Box { size 0.196271 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation -0.293461 -1.978353 0.016
+      rotation 0 0 1 6.135923152
+      children [ Shape { appearance USE WHITE geometry Box { size 0.196271 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation -0.098135 -1.997591 0.016
+      rotation 0 0 1 6.234097922
+      children [ Shape { appearance USE WHITE geometry Box { size 0.196271 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation 0.098135 -1.997591 0.016
+      rotation 0 0 1 6.332272692
+      children [ Shape { appearance USE WHITE geometry Box { size 0.196271 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation 0.293461 -1.978353 0.016
+      rotation 0 0 1 6.430447463
+      children [ Shape { appearance USE WHITE geometry Box { size 0.196271 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation 0.485960 -1.940063 0.016
+      rotation 0 0 1 6.528622233
+      children [ Shape { appearance USE WHITE geometry Box { size 0.196271 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation 0.673780 -1.883088 0.016
+      rotation 0 0 1 6.626797004
+      children [ Shape { appearance USE WHITE geometry Box { size 0.196271 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation 0.855110 -1.807979 0.016
+      rotation 0 0 1 6.724971774
+      children [ Shape { appearance USE WHITE geometry Box { size 0.196271 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation 1.028205 -1.715457 0.016
+      rotation 0 0 1 6.823146545
+      children [ Shape { appearance USE WHITE geometry Box { size 0.196271 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation 1.191399 -1.606415 0.016
+      rotation 0 0 1 6.921321315
+      children [ Shape { appearance USE WHITE geometry Box { size 0.196271 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation 1.343118 -1.481902 0.016
+      rotation 0 0 1 7.019496085
+      children [ Shape { appearance USE WHITE geometry Box { size 0.196271 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation 1.481902 -1.343118 0.016
+      rotation 0 0 1 7.117670856
+      children [ Shape { appearance USE WHITE geometry Box { size 0.196271 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation 1.606415 -1.191399 0.016
+      rotation 0 0 1 7.215845626
+      children [ Shape { appearance USE WHITE geometry Box { size 0.196271 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation 1.715457 -1.028205 0.016
+      rotation 0 0 1 7.314020397
+      children [ Shape { appearance USE WHITE geometry Box { size 0.196271 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation 1.807979 -0.855110 0.016
+      rotation 0 0 1 7.412195167
+      children [ Shape { appearance USE WHITE geometry Box { size 0.196271 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation 1.883088 -0.673780 0.016
+      rotation 0 0 1 7.510369937
+      children [ Shape { appearance USE WHITE geometry Box { size 0.196271 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation 1.940063 -0.485960 0.016
+      rotation 0 0 1 7.608544708
+      children [ Shape { appearance USE WHITE geometry Box { size 0.196271 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation 1.978353 -0.293461 0.016
+      rotation 0 0 1 7.706719478
+      children [ Shape { appearance USE WHITE geometry Box { size 0.196271 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation 1.997591 -0.098135 0.016
+      rotation 0 0 1 7.804894249
+      children [ Shape { appearance USE WHITE geometry Box { size 0.196271 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation 0.000000 0.000000 0.016
+      rotation 0 0 1 0.000000000
+      children [ Shape { appearance USE WHITE geometry Box { size 0.200000 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation 0.000000 0.000000 0.016
+      rotation 0 0 1 0.000000000
+      children [ Shape { appearance USE WHITE geometry Box { size 0.080000 0.200000 0.032 } } ]
+    }
+    Pose {
+      translation -7.500000 0.000000 0.016
+      rotation 0 0 1 0.000000000
+      children [ Shape { appearance USE WHITE geometry Box { size 0.200000 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation -7.500000 0.000000 0.016
+      rotation 0 0 1 0.000000000
+      children [ Shape { appearance USE WHITE geometry Box { size 0.080000 0.200000 0.032 } } ]
+    }
+    Pose {
+      translation 7.500000 0.000000 0.016
+      rotation 0 0 1 0.000000000
+      children [ Shape { appearance USE WHITE geometry Box { size 0.200000 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation 7.500000 0.000000 0.016
+      rotation 0 0 1 0.000000000
+      children [ Shape { appearance USE WHITE geometry Box { size 0.080000 0.200000 0.032 } } ]
+    }
+    Pose {
+      translation -6.000000 0.000000 0.016
+      rotation 0 0 1 0.000000000
+      children [ Shape { appearance USE WHITE geometry Box { size 0.080000 8.000000 0.032 } } ]
+    }
+    Pose {
+      translation -8.500000 4.000000 0.016
+      rotation 0 0 1 0.000000000
+      children [ Shape { appearance USE WHITE geometry Box { size 5.000000 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation -8.500000 -4.000000 0.016
+      rotation 0 0 1 0.000000000
+      children [ Shape { appearance USE WHITE geometry Box { size 5.000000 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation 6.000000 0.000000 0.016
+      rotation 0 0 1 0.000000000
+      children [ Shape { appearance USE WHITE geometry Box { size 0.080000 8.000000 0.032 } } ]
+    }
+    Pose {
+      translation 8.500000 4.000000 0.016
+      rotation 0 0 1 0.000000000
+      children [ Shape { appearance USE WHITE geometry Box { size 5.000000 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation 8.500000 -4.000000 0.016
+      rotation 0 0 1 0.000000000
+      children [ Shape { appearance USE WHITE geometry Box { size 5.000000 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation -9.000000 0.000000 0.016
+      rotation 0 0 1 0.000000000
+      children [ Shape { appearance USE WHITE geometry Box { size 0.080000 5.000000 0.032 } } ]
+    }
+    Pose {
+      translation -10.000000 2.500000 0.016
+      rotation 0 0 1 0.000000000
+      children [ Shape { appearance USE WHITE geometry Box { size 2.000000 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation -10.000000 -2.500000 0.016
+      rotation 0 0 1 0.000000000
+      children [ Shape { appearance USE WHITE geometry Box { size 2.000000 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation 9.000000 0.000000 0.016
+      rotation 0 0 1 0.000000000
+      children [ Shape { appearance USE WHITE geometry Box { size 0.080000 5.000000 0.032 } } ]
+    }
+    Pose {
+      translation 10.000000 2.500000 0.016
+      rotation 0 0 1 0.000000000
+      children [ Shape { appearance USE WHITE geometry Box { size 2.000000 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation 10.000000 -2.500000 0.016
+      rotation 0 0 1 0.000000000
+      children [ Shape { appearance USE WHITE geometry Box { size 2.000000 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation -10.300843 -6.965653 0.016
+      rotation 0 0 1 1.619883712
+      children [ Shape { appearance USE WHITE geometry Box { size 0.068695 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation -10.307576 -6.897289 0.016
+      rotation 0 0 1 1.718058482
+      children [ Shape { appearance USE WHITE geometry Box { size 0.068695 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation -10.320978 -6.829914 0.016
+      rotation 0 0 1 1.816233253
+      children [ Shape { appearance USE WHITE geometry Box { size 0.068695 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation -10.340919 -6.764177 0.016
+      rotation 0 0 1 1.914408023
+      children [ Shape { appearance USE WHITE geometry Box { size 0.068695 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation -10.367207 -6.700711 0.016
+      rotation 0 0 1 2.012582794
+      children [ Shape { appearance USE WHITE geometry Box { size 0.068695 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation -10.399590 -6.640128 0.016
+      rotation 0 0 1 2.110757564
+      children [ Shape { appearance USE WHITE geometry Box { size 0.068695 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation -10.437755 -6.583010 0.016
+      rotation 0 0 1 2.208932335
+      children [ Shape { appearance USE WHITE geometry Box { size 0.068695 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation -10.481334 -6.529909 0.016
+      rotation 0 0 1 2.307107105
+      children [ Shape { appearance USE WHITE geometry Box { size 0.068695 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation -10.529909 -6.481334 0.016
+      rotation 0 0 1 2.405281875
+      children [ Shape { appearance USE WHITE geometry Box { size 0.068695 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation -10.583010 -6.437755 0.016
+      rotation 0 0 1 2.503456646
+      children [ Shape { appearance USE WHITE geometry Box { size 0.068695 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation -10.640128 -6.399590 0.016
+      rotation 0 0 1 2.601631416
+      children [ Shape { appearance USE WHITE geometry Box { size 0.068695 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation -10.700711 -6.367207 0.016
+      rotation 0 0 1 2.699806187
+      children [ Shape { appearance USE WHITE geometry Box { size 0.068695 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation -10.764177 -6.340919 0.016
+      rotation 0 0 1 2.797980957
+      children [ Shape { appearance USE WHITE geometry Box { size 0.068695 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation -10.829914 -6.320978 0.016
+      rotation 0 0 1 2.896155728
+      children [ Shape { appearance USE WHITE geometry Box { size 0.068695 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation -10.897289 -6.307576 0.016
+      rotation 0 0 1 2.994330498
+      children [ Shape { appearance USE WHITE geometry Box { size 0.068695 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation -10.965653 -6.300843 0.016
+      rotation 0 0 1 3.092505268
+      children [ Shape { appearance USE WHITE geometry Box { size 0.068695 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation 10.965653 -6.300843 0.016
+      rotation 0 0 1 3.190680039
+      children [ Shape { appearance USE WHITE geometry Box { size 0.068695 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation 10.897289 -6.307576 0.016
+      rotation 0 0 1 3.288854809
+      children [ Shape { appearance USE WHITE geometry Box { size 0.068695 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation 10.829914 -6.320978 0.016
+      rotation 0 0 1 3.387029580
+      children [ Shape { appearance USE WHITE geometry Box { size 0.068695 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation 10.764177 -6.340919 0.016
+      rotation 0 0 1 3.485204350
+      children [ Shape { appearance USE WHITE geometry Box { size 0.068695 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation 10.700711 -6.367207 0.016
+      rotation 0 0 1 3.583379121
+      children [ Shape { appearance USE WHITE geometry Box { size 0.068695 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation 10.640128 -6.399590 0.016
+      rotation 0 0 1 3.681553891
+      children [ Shape { appearance USE WHITE geometry Box { size 0.068695 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation 10.583010 -6.437755 0.016
+      rotation 0 0 1 3.779728661
+      children [ Shape { appearance USE WHITE geometry Box { size 0.068695 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation 10.529909 -6.481334 0.016
+      rotation 0 0 1 3.877903432
+      children [ Shape { appearance USE WHITE geometry Box { size 0.068695 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation 10.481334 -6.529909 0.016
+      rotation 0 0 1 3.976078202
+      children [ Shape { appearance USE WHITE geometry Box { size 0.068695 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation 10.437755 -6.583010 0.016
+      rotation 0 0 1 4.074252973
+      children [ Shape { appearance USE WHITE geometry Box { size 0.068695 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation 10.399590 -6.640128 0.016
+      rotation 0 0 1 4.172427743
+      children [ Shape { appearance USE WHITE geometry Box { size 0.068695 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation 10.367207 -6.700711 0.016
+      rotation 0 0 1 4.270602513
+      children [ Shape { appearance USE WHITE geometry Box { size 0.068695 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation 10.340919 -6.764177 0.016
+      rotation 0 0 1 4.368777284
+      children [ Shape { appearance USE WHITE geometry Box { size 0.068695 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation 10.320978 -6.829914 0.016
+      rotation 0 0 1 4.466952054
+      children [ Shape { appearance USE WHITE geometry Box { size 0.068695 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation 10.307576 -6.897289 0.016
+      rotation 0 0 1 4.565126825
+      children [ Shape { appearance USE WHITE geometry Box { size 0.068695 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation 10.300843 -6.965653 0.016
+      rotation 0 0 1 4.663301595
+      children [ Shape { appearance USE WHITE geometry Box { size 0.068695 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation 10.300843 6.965653 0.016
+      rotation 0 0 1 4.761476366
+      children [ Shape { appearance USE WHITE geometry Box { size 0.068695 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation 10.307576 6.897289 0.016
+      rotation 0 0 1 4.859651136
+      children [ Shape { appearance USE WHITE geometry Box { size 0.068695 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation 10.320978 6.829914 0.016
+      rotation 0 0 1 4.957825906
+      children [ Shape { appearance USE WHITE geometry Box { size 0.068695 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation 10.340919 6.764177 0.016
+      rotation 0 0 1 5.056000677
+      children [ Shape { appearance USE WHITE geometry Box { size 0.068695 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation 10.367207 6.700711 0.016
+      rotation 0 0 1 5.154175447
+      children [ Shape { appearance USE WHITE geometry Box { size 0.068695 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation 10.399590 6.640128 0.016
+      rotation 0 0 1 5.252350218
+      children [ Shape { appearance USE WHITE geometry Box { size 0.068695 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation 10.437755 6.583010 0.016
+      rotation 0 0 1 5.350524988
+      children [ Shape { appearance USE WHITE geometry Box { size 0.068695 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation 10.481334 6.529909 0.016
+      rotation 0 0 1 5.448699759
+      children [ Shape { appearance USE WHITE geometry Box { size 0.068695 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation 10.529909 6.481334 0.016
+      rotation 0 0 1 5.546874529
+      children [ Shape { appearance USE WHITE geometry Box { size 0.068695 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation 10.583010 6.437755 0.016
+      rotation 0 0 1 5.645049299
+      children [ Shape { appearance USE WHITE geometry Box { size 0.068695 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation 10.640128 6.399590 0.016
+      rotation 0 0 1 5.743224070
+      children [ Shape { appearance USE WHITE geometry Box { size 0.068695 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation 10.700711 6.367207 0.016
+      rotation 0 0 1 5.841398840
+      children [ Shape { appearance USE WHITE geometry Box { size 0.068695 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation 10.764177 6.340919 0.016
+      rotation 0 0 1 5.939573611
+      children [ Shape { appearance USE WHITE geometry Box { size 0.068695 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation 10.829914 6.320978 0.016
+      rotation 0 0 1 6.037748381
+      children [ Shape { appearance USE WHITE geometry Box { size 0.068695 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation 10.897289 6.307576 0.016
+      rotation 0 0 1 6.135923152
+      children [ Shape { appearance USE WHITE geometry Box { size 0.068695 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation 10.965653 6.300843 0.016
+      rotation 0 0 1 6.234097922
+      children [ Shape { appearance USE WHITE geometry Box { size 0.068695 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation -10.965653 6.300843 0.016
+      rotation 0 0 1 6.332272692
+      children [ Shape { appearance USE WHITE geometry Box { size 0.068695 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation -10.897289 6.307576 0.016
+      rotation 0 0 1 6.430447463
+      children [ Shape { appearance USE WHITE geometry Box { size 0.068695 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation -10.829914 6.320978 0.016
+      rotation 0 0 1 6.528622233
+      children [ Shape { appearance USE WHITE geometry Box { size 0.068695 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation -10.764177 6.340919 0.016
+      rotation 0 0 1 6.626797004
+      children [ Shape { appearance USE WHITE geometry Box { size 0.068695 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation -10.700711 6.367207 0.016
+      rotation 0 0 1 6.724971774
+      children [ Shape { appearance USE WHITE geometry Box { size 0.068695 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation -10.640128 6.399590 0.016
+      rotation 0 0 1 6.823146545
+      children [ Shape { appearance USE WHITE geometry Box { size 0.068695 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation -10.583010 6.437755 0.016
+      rotation 0 0 1 6.921321315
+      children [ Shape { appearance USE WHITE geometry Box { size 0.068695 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation -10.529909 6.481334 0.016
+      rotation 0 0 1 7.019496085
+      children [ Shape { appearance USE WHITE geometry Box { size 0.068695 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation -10.481334 6.529909 0.016
+      rotation 0 0 1 7.117670856
+      children [ Shape { appearance USE WHITE geometry Box { size 0.068695 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation -10.437755 6.583010 0.016
+      rotation 0 0 1 7.215845626
+      children [ Shape { appearance USE WHITE geometry Box { size 0.068695 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation -10.399590 6.640128 0.016
+      rotation 0 0 1 7.314020397
+      children [ Shape { appearance USE WHITE geometry Box { size 0.068695 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation -10.367207 6.700711 0.016
+      rotation 0 0 1 7.412195167
+      children [ Shape { appearance USE WHITE geometry Box { size 0.068695 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation -10.340919 6.764177 0.016
+      rotation 0 0 1 7.510369937
+      children [ Shape { appearance USE WHITE geometry Box { size 0.068695 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation -10.320978 6.829914 0.016
+      rotation 0 0 1 7.608544708
+      children [ Shape { appearance USE WHITE geometry Box { size 0.068695 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation -10.307576 6.897289 0.016
+      rotation 0 0 1 7.706719478
+      children [ Shape { appearance USE WHITE geometry Box { size 0.068695 0.080000 0.032 } } ]
+    }
+    Pose {
+      translation -10.300843 6.965653 0.016
+      rotation 0 0 1 7.804894249
+      children [ Shape { appearance USE WHITE geometry Box { size 0.068695 0.080000 0.032 } } ]
+    }
+  ]
+}
+
+# FIFA futsal-size 3 m x 2 m goal frames, with 0.5 m visual depth.
+DEF LEFT_GOAL Solid {
+  children [
+    Pose { translation -11 1.5 1 children [ Shape { appearance USE WHITE geometry Box { size 0.12 0.12 2 } } ] }
+    Pose { translation -11 -1.5 1 children [ Shape { appearance USE WHITE geometry Box { size 0.12 0.12 2 } } ] }
+    Pose { translation -11 0 2 children [ Shape { appearance USE WHITE geometry Box { size 0.12 3.12 0.12 } } ] }
+    Pose { translation -11.5 1.5 1 children [ Shape { appearance USE WHITE geometry Box { size 0.12 0.12 2 } } ] }
+    Pose { translation -11.5 -1.5 1 children [ Shape { appearance USE WHITE geometry Box { size 0.12 0.12 2 } } ] }
+    Pose { translation -11.5 0 2 children [ Shape { appearance USE WHITE geometry Box { size 0.12 3.12 0.12 } } ] }
+    Pose { translation -11.25 1.5 2 children [ Shape { appearance USE WHITE geometry Box { size 0.5 0.12 0.12 } } ] }
+    Pose { translation -11.25 -1.5 2 children [ Shape { appearance USE WHITE geometry Box { size 0.5 0.12 0.12 } } ] }
+  ]
+  name "left_goal_3x2"
+  locked TRUE
+}
+DEF RIGHT_GOAL Solid {
+  children [
+    Pose { translation 11 1.5 1 children [ Shape { appearance USE WHITE geometry Box { size 0.12 0.12 2 } } ] }
+    Pose { translation 11 -1.5 1 children [ Shape { appearance USE WHITE geometry Box { size 0.12 0.12 2 } } ] }
+    Pose { translation 11 0 2 children [ Shape { appearance USE WHITE geometry Box { size 0.12 3.12 0.12 } } ] }
+    Pose { translation 11.5 1.5 1 children [ Shape { appearance USE WHITE geometry Box { size 0.12 0.12 2 } } ] }
+    Pose { translation 11.5 -1.5 1 children [ Shape { appearance USE WHITE geometry Box { size 0.12 0.12 2 } } ] }
+    Pose { translation 11.5 0 2 children [ Shape { appearance USE WHITE geometry Box { size 0.12 3.12 0.12 } } ] }
+    Pose { translation 11.25 1.5 2 children [ Shape { appearance USE WHITE geometry Box { size 0.5 0.12 0.12 } } ] }
+    Pose { translation 11.25 -1.5 2 children [ Shape { appearance USE WHITE geometry Box { size 0.5 0.12 0.12 } } ] }
+  ]
+  name "right_goal_3x2"
+  locked TRUE
+}
+
+DEF BALL Solid {
+  translation 0 0 0.12
+  children [
+    Shape {
+      appearance PBRAppearance {
+        baseColor 0.96 0.96 0.96
+        roughness 0.55
+        metalness 0
+      }
+      geometry Sphere {
+        radius 0.12
+        subdivision 3
+      }
+    }
+  ]
+  name "ball"
+  boundingObject Sphere { radius 0.12 }
+  physics Physics {
+    density -1
+    mass 0.43
+    damping Damping {
+      linear 0.12
+      angular 0.35
+    }
+  }
+}
+
+# Single authoritative gateway. It contains no tactical decisions.
+DEF WEBOTS_GATEWAY Robot {
+  translation 0 0 -3
+  name "WEBOTS_GATEWAY"
+  controller "webots_gateway"
+  supervisor TRUE
+}
+
+DEF RED_1 T1KinematicProxy {
+  translation -9.0 0.0 0
+  rotation 0 0 1 0.0
+  name "RED_1"
+  controller "<none>"
+  customData "team=red;id=1;role=goalkeeper;home=-9.0,0.0;attack=1"
+  teamColor 0.84 0.03 0.03
+}
+
+DEF RED_2 T1KinematicProxy {
+  translation -6.2 2.6 0
+  rotation 0 0 1 0.0
+  name "RED_2"
+  controller "<none>"
+  customData "team=red;id=2;role=defender_left;home=-6.2,2.6;attack=1"
+  teamColor 0.84 0.03 0.03
+}
+
+DEF RED_3 T1KinematicProxy {
+  translation -6.2 -2.6 0
+  rotation 0 0 1 0.0
+  name "RED_3"
+  controller "<none>"
+  customData "team=red;id=3;role=defender_right;home=-6.2,-2.6;attack=1"
+  teamColor 0.84 0.03 0.03
+}
+
+DEF RED_4 T1KinematicProxy {
+  translation -3.6 0.0 0
+  rotation 0 0 1 0.0
+  name "RED_4"
+  controller "<none>"
+  customData "team=red;id=4;role=midfielder;home=-3.6,0.0;attack=1"
+  teamColor 0.84 0.03 0.03
+}
+
+DEF RED_5 T1KinematicProxy {
+  translation -1.7 1.4 0
+  rotation 0 0 1 0.0
+  name "RED_5"
+  controller "<none>"
+  customData "team=red;id=5;role=striker;home=-1.7,1.4;attack=1"
+  teamColor 0.84 0.03 0.03
+}
+
+DEF BLUE_1 T1KinematicProxy {
+  translation 9.0 0.0 0
+  rotation 0 0 1 3.141592653589793
+  name "BLUE_1"
+  controller "<none>"
+  customData "team=blue;id=1;role=goalkeeper;home=9.0,0.0;attack=-1"
+  teamColor 0.03 0.16 0.86
+}
+
+DEF BLUE_2 T1KinematicProxy {
+  translation 6.2 -2.6 0
+  rotation 0 0 1 3.141592653589793
+  name "BLUE_2"
+  controller "<none>"
+  customData "team=blue;id=2;role=defender_left;home=6.2,-2.6;attack=-1"
+  teamColor 0.03 0.16 0.86
+}
+
+DEF BLUE_3 T1KinematicProxy {
+  translation 6.2 2.6 0
+  rotation 0 0 1 3.141592653589793
+  name "BLUE_3"
+  controller "<none>"
+  customData "team=blue;id=3;role=defender_right;home=6.2,2.6;attack=-1"
+  teamColor 0.03 0.16 0.86
+}
+
+DEF BLUE_4 T1KinematicProxy {
+  translation 3.6 0.0 0
+  rotation 0 0 1 3.141592653589793
+  name "BLUE_4"
+  controller "<none>"
+  customData "team=blue;id=4;role=midfielder;home=3.6,0.0;attack=-1"
+  teamColor 0.03 0.16 0.86
+}
+
+DEF BLUE_5 T1KinematicProxy {
+  translation 1.7 -1.4 0
+  rotation 0 0 1 3.141592653589793
+  name "BLUE_5"
+  controller "<none>"
+  customData "team=blue;id=5;role=striker;home=1.7,-1.4;attack=-1"
+  teamColor 0.03 0.16 0.86
+}

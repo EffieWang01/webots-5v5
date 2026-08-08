@@ -1,0 +1,23 @@
+<root BTCPP_format="4" >
+   <include path="./subtree_cam_find_and_track_ball.xml" />
+   <include path="./subtree_find_ball.xml" />
+   <include path="./subtree_locate.xml" />
+   <BehaviorTree ID="GoalKeeperFreekick">
+      <ReactiveSequence>
+         <!-- Own goal kick: approach as taker (v3 Brain owns set-play). -->
+         <ReactiveSequence _while="gc_is_sub_state_kickoff_side &amp;&amp; gc_real_game_sub_state=='GOAL_KICK'">
+            <CamTrackBall _while="ball_location_known" />
+            <CalcKickDir />
+            <SubTree ID="FindBall" _while="!(ball_location_known || tm_ball_pos_reliable)" _autoremap="true" />
+            <GoToFreekickPosition _while="ball_location_known || tm_ball_pos_reliable" side="attack" attack_dist="0.50" vx_limit="0.7" vy_limit="0.4" />
+         </ReactiveSequence>
+         <!-- Otherwise stay on goal line / block. -->
+         <ReactiveSequence _while="!(gc_is_sub_state_kickoff_side &amp;&amp; gc_real_game_sub_state=='GOAL_KICK')">
+            <SubTree ID="CamFindAndTrackBall" _autoremap="true" />
+            <GoToReadyPosition _while="!ball_location_known" />
+            <GoToGoalBlockingPosition _while="ball_location_known" />
+            <SelfLocate mode="trust_direction" _while="odom_calibrated" />
+         </ReactiveSequence>
+      </ReactiveSequence>
+   </BehaviorTree>
+</root>
