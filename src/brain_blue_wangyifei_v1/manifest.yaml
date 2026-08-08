@@ -1,16 +1,17 @@
 name: brain_v3
-version: 3.0.0
-display_name: Brain v3 (setplay + anti-crowd)
+version: 3.1.0
+display_name: Brain v3.1 (dynamic striker roles)
 tree_file: behavior_trees/game.xml
 config_file: config/config.yaml
 vision_config: config/vision.yaml
 optimized: true
-# Jersey duties (v3):
-#   1 GK — goal-kick taker only
-#   2 defender — own-half clear; never chase midfield
-#   3 midfielder strategy (role=striker) — open-play support; set-play may take if closest
-#   4 primary striker — open-play lead prefer; set-play by cost-rank
-#   5 secondary striker — open-play steal lead if closer; set-play by cost-rank
+# Runtime duties (v3.1):
+#   goalkeeper — selected by the configured jersey fallback order
+#   primary striker — lowest live ball-control cost among field players
+#   secondary striker — second-lowest live ball-control cost
+#   remaining field players — defender and midfielder by formation preference
+# Legacy startup roles below are retained for package/importer compatibility;
+# handleCooperation replaces field roles dynamically at runtime.
 roles:
   1: goal_keeper
   2: defender
@@ -19,6 +20,8 @@ roles:
   5: striker
 notes: >
   Fork of brain_v2. Brain owns set-play (bridge_set_play_drive=false).
+  Open-play primary/secondary striker roles are reassigned dynamically from live
+  ball-control cost with 500 ms hysteresis; jersey ID only breaks equal-cost ties.
   Set-play taker = cost-rank 0 among strikers (not fixed jersey); GK for goal kick.
   Open-play anti-crowd (R_crowd) + lead hysteresis; jersey cost bias off during FREE_KICK.
   Corner fix: freekickKickoffStartTime rising-edge only (no forever isFreekickKickingOff);

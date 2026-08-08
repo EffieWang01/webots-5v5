@@ -4,6 +4,7 @@
 #include <cstring>
 #include <algorithm>
 #include <array>
+#include <cmath>
 #include <map>
 #include <set>
 #include <yaml-cpp/yaml.h>
@@ -235,8 +236,8 @@ Brain::Brain() : rclcpp::Node("brain_node")
     declare_parameter<int>("strategy.v3.lead_secondary_jersey", 5);
     declare_parameter<int>("strategy.v3.lead_midfielder_jersey", 3);
     declare_parameter<double>("strategy.v3.lead_secondary_margin", 1.5);
-    declare_parameter<double>("strategy.v3.midfielder_cost_penalty", 12.0);
-    declare_parameter<double>("strategy.v3.prefer_jersey_cost_bonus", 1.2);
+    declare_parameter<double>("strategy.v3.midfielder_cost_penalty", 0.0);
+    declare_parameter<double>("strategy.v3.prefer_jersey_cost_bonus", 0.0);
     declare_parameter<double>("strategy.v3.assist_primary_behind", 1.8);
     declare_parameter<double>("strategy.v3.assist_secondary_behind", 2.3);
     declare_parameter<double>("strategy.v3.assist_lateral", 1.5);
@@ -260,21 +261,19 @@ Brain::Brain() : rclcpp::Node("brain_node")
     declare_parameter<double>("strategy.v3.setplay_force_kick_near_ms", 10000.0);
     declare_parameter<double>("strategy.v3.setplay_force_kick_near_range", 0.75);
     declare_parameter<vector<int64_t>>("strategy.roles.candidates.goalkeeper", vector<int64_t>{1, 2, 3, 5, 4});
-    declare_parameter<vector<int64_t>>("strategy.roles.candidates.primary_striker", vector<int64_t>{4, 5, 3, 2, 1});
     declare_parameter<vector<int64_t>>("strategy.roles.candidates.defender", vector<int64_t>{2, 3, 5, 4, 1});
     declare_parameter<vector<int64_t>>("strategy.roles.candidates.midfielder", vector<int64_t>{3, 5, 2, 4, 1});
-    declare_parameter<vector<int64_t>>("strategy.roles.candidates.secondary_striker", vector<int64_t>{5, 3, 4, 2, 1});
     declare_parameter<vector<int64_t>>("strategy.roles.kickoff_taker_order", vector<int64_t>{4, 5, 3, 2});
-    declare_parameter<double>("strategy.roles.role_switch_stable_msecs", 1200.0);
+    declare_parameter<double>("strategy.roles.role_switch_stable_msecs", 500.0);
     declare_parameter<double>("strategy.roles.teammate_temp_missing_msecs", 1500.0);
     declare_parameter<double>("strategy.roles.teammate_unavailable_msecs", 5000.0);
     declare_parameter<double>("strategy.roles.rejoin_stable_msecs", 1500.0);
     declare_parameter<double>("strategy.roles.lead_switch_stable_msecs", 500.0);
-    declare_parameter<double>("strategy.roles.lead_switch_advantage", 0.60);
+    declare_parameter<double>("strategy.roles.lead_switch_advantage", 0.40);
     declare_parameter<double>("strategy.roles.lead_cost_penalty.primary_striker", 0.0);
-    declare_parameter<double>("strategy.roles.lead_cost_penalty.secondary_striker", 0.8);
-    declare_parameter<double>("strategy.roles.lead_cost_penalty.midfielder", 2.0);
-    declare_parameter<double>("strategy.roles.lead_cost_penalty.defender", 4.0);
+    declare_parameter<double>("strategy.roles.lead_cost_penalty.secondary_striker", 0.2);
+    declare_parameter<double>("strategy.roles.lead_cost_penalty.midfielder", 0.4);
+    declare_parameter<double>("strategy.roles.lead_cost_penalty.defender", 1.0);
     declare_parameter<double>("strategy.roles.lead_cost_penalty.goalkeeper", 1000.0);
     declare_parameter<double>("strategy.roles.lead_cost_penalty.unknown", 8.0);
     declare_parameter<double>("strategy.roles.recovery_cost_penalty", 15.0);
@@ -1224,24 +1223,47 @@ void Brain::handleCooperation() {
         }
     };
 
-    vector<int> rolesToKeep;
-    const int eligibleCount = static_cast<int>(roleEligibleIds.size());
-    if (eligibleCount >= 1) rolesToKeep.push_back(ROLE_GOALKEEPER);
-    if (eligibleCount >= 2) rolesToKeep.push_back(ROLE_PRIMARY_STRIKER);
-    if (eligibleCount >= 3) rolesToKeep.push_back(ROLE_DEFENDER);
-    if (eligibleCount >= 4) rolesToKeep.push_back(ROLE_MIDFIELDER);
-    if (eligibleCount >= 5) rolesToKeep.push_back(ROLE_SECONDARY_STRIKER);
-
     map<int, vector<int>> candidates;
     candidates[ROLE_GOALKEEPER] = getIntVectorParam(this, "strategy.roles.candidates.goalkeeper", {1, 2, 3, 5, 4});
-    candidates[ROLE_PRIMARY_STRIKER] = getIntVectorParam(this, "strategy.roles.candidates.primary_striker", {4, 5, 3, 2, 1});
     candidates[ROLE_DEFENDER] = getIntVectorParam(this, "strategy.roles.candidates.defender", {2, 3, 5, 4, 1});
     candidates[ROLE_MIDFIELDER] = getIntVectorParam(this, "strategy.roles.candidates.midfielder", {3, 5, 2, 4, 1});
-    candidates[ROLE_SECONDARY_STRIKER] = getIntVectorParam(this, "strategy.roles.candidates.secondary_striker", {5, 3, 4, 2, 1});
 
     set<int> usedIds;
-    for (int roleCode : rolesToKeep) {
-        assignRole(roleCode, candidates[roleCode], usedIds);
+    if (!roleEligibleIds.empty()) {
+        assignRole(ROLE_GOALKEEPER, candidates[ROLE_GOALKEEPER], usedIds);
+    }
+
+    // Field roles are dynamic: the best current ball-control cost owns the
+    // primary-striker role, and the second best becomes secondary striker.
+    // Ties are resolved by jersey ID so every robot converges on the same map.
+    vector<int> fieldIds;
+    for (int id : roleEligibleIds) {
+        if (!usedIds.count(id)) fieldIds.push_back(id);
+    }
+    auto ballControlCost = [&](int id) {
+        const double cost = id == selfId ? data->tmMyCost : data->tmStatus[id - 1].cost;
+        return std::isfinite(cost) ? cost : 1e9;
+    };
+    stable_sort(fieldIds.begin(), fieldIds.end(), [&](int lhs, int rhs) {
+        const double lhsCost = ballControlCost(lhs);
+        const double rhsCost = ballControlCost(rhs);
+        if (fabs(lhsCost - rhsCost) > 1e-6) return lhsCost < rhsCost;
+        return lhs < rhs;
+    });
+
+    if (!fieldIds.empty()) {
+        desiredRoles[fieldIds[0] - 1] = ROLE_PRIMARY_STRIKER;
+        usedIds.insert(fieldIds[0]);
+    }
+    if (fieldIds.size() >= 2) {
+        desiredRoles[fieldIds[1] - 1] = ROLE_SECONDARY_STRIKER;
+        usedIds.insert(fieldIds[1]);
+    }
+    if (fieldIds.size() >= 3) {
+        assignRole(ROLE_DEFENDER, candidates[ROLE_DEFENDER], usedIds);
+    }
+    if (fieldIds.size() >= 4) {
+        assignRole(ROLE_MIDFIELDER, candidates[ROLE_MIDFIELDER], usedIds);
     }
 
     for (int i = 0; i < HL_MAX_NUM_PLAYERS; ++i) {
@@ -1861,8 +1883,8 @@ void Brain::updateCostToKick() {
 
     }
 
-    // v3 jersey bias (open play): midfielder avoids first touch; primary preferred.
-    // During FREE_KICK, skip bias so cost-rank ??who is closer (set-play taker selection).
+    // Optional legacy role bias. The shipped dynamic-role configuration keeps
+    // both values at zero so role assignment ranks the unshaped control cost.
     if (get_parameter("strategy.v3.enable").as_bool()) {
         const string subType = tree->getEntry<string>("gc_game_sub_state_type");
         const bool setplayCost = (subType == "FREE_KICK");
